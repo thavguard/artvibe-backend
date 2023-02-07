@@ -1,30 +1,33 @@
+import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { User } from './users/schemas/user.schema';
+import { AuthModule } from './authentication/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { NODE_ENV } from './app.constant';
+import { DatabaseModule } from './database/database.module';
+
 
 @Module({
   imports: [
     UserModule,
-    PostsModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'root',
-      database: 'nest-js-blog',
-      entities: [User],
-      synchronize: true,
-    })
+    AuthModule,
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        PORT: Joi.number().required(),
+        NODE_ENV: Joi.string().required().valid(NODE_ENV.DEVELOPMENT, NODE_ENV.PRODUCTION),
+        POSTGRES_HOST: Joi.string().required(),
+        POSTGRES_PORT: Joi.number().required(),
+        POSTGRES_USER: Joi.string().required(),
+        POSTGRES_PASSWORD: Joi.string().required(),
+        POSTGRES_DB: Joi.string().required()
+      })
+    }),
+    DatabaseModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {
-  constructor(private dataSourse: DataSource) { }
 }
