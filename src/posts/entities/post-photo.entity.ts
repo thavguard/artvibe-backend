@@ -1,0 +1,12 @@
+import { AbstractEntity } from "../../common/entities/abstract.entity";
+import { Column, Entity, ManyToOne } from "typeorm";
+import { PostEntity } from "./post.entity";
+
+@Entity("post_photos")
+export class PostPhotoEntity extends AbstractEntity {
+  @Column()
+  public url: string;
+
+  @ManyToOne(() => PostEntity, (post) => post.photos)
+  public post: PostEntity;
+}
