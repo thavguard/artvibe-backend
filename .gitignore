@@ -39,3 +39,6 @@ description.md
 
 # .env
 .env
+
+# uploads
+/uploads

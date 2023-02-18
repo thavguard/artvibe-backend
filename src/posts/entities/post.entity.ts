@@ -1,6 +1,6 @@
 import { AbstractEntity } from "../../common/entities/abstract.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
-import { Like } from "../../likes/entities/like.entity";
+import { Like } from "./like.entity";
 import { User } from "../../users/entities/user.entity";
 import { PostPhotoEntity } from "./post-photo.entity";
 
