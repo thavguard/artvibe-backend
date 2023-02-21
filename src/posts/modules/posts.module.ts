@@ -6,9 +6,11 @@ import { PostEntity } from '../entities/post.entity';
 import { CaslModule } from '../../casl/casl.module';
 import { UserModule } from '../../users/users.module';
 import { PostPhotosModule } from './post-photos.module';
+import { LikesModule } from './likes.module';
+import { CommentariesModule } from './commentaries.module';
 
 @Module({
-  imports: [CaslModule, TypeOrmModule.forFeature([PostEntity]), UserModule, PostPhotosModule],
+  imports: [CaslModule, TypeOrmModule.forFeature([PostEntity]), UserModule, PostPhotosModule, LikesModule, CommentariesModule],
   providers: [PostsService],
   controllers: [PostsController],
   exports: [PostsService]

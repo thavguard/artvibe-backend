@@ -13,6 +13,7 @@ import { LikesModule } from './posts/modules/likes.module';
 import { CaslModule } from './casl/casl.module';
 import { PostPhotosModule } from './posts/modules/post-photos.module';
 import { MulterModule } from './multer/multer.module';
+import { CommentariesModule } from './posts/modules/commentaries.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { MulterModule } from './multer/multer.module';
     PostsModule,
     LikesModule,
     CaslModule,
-    PostPhotosModule
+    PostPhotosModule,
+    CommentariesModule
   ],
   controllers: [AppController],
   providers: [AppService]

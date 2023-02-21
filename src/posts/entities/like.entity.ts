@@ -9,7 +9,8 @@ export class Like extends AbstractEntity {
   @JoinColumn()
   public post: PostEntity;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, { eager: true })
   @JoinColumn()
   public user: User;
 }
+

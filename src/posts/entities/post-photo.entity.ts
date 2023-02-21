@@ -5,7 +5,7 @@ import { PostEntity } from "./post.entity";
 @Entity("post_photos")
 export class PostPhotoEntity extends AbstractEntity {
   @Column()
-  public url: string;
+  public filename: string;
 
   @ManyToOne(() => PostEntity, (post) => post.photos)
   public post: PostEntity;

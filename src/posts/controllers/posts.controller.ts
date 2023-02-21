@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseFilePipeBuilder,
   ParseIntPipe,
   Post,
   Put,
@@ -27,6 +27,10 @@ import { postsConstants } from '../constants/posts.constants';
 import { diskStorage } from 'multer';
 import { multerOptions } from '../../multer/configs/multer.config';
 import { PostPhotosService } from '../services/post-photos.service';
+import { Like } from '../entities/like.entity';
+import { Commentary } from '../entities/commentaries.entity';
+import { CreateCommentDto } from '../dtos/create-comment.dto';
+import { UpdateCommentDto } from '../dtos/update-comment.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -36,18 +40,20 @@ export class PostsController {
 
   }
 
+  // Post
+
   @Get()
   async findAll(): Promise<PostEntity[]> {
     return this.postsService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<PostEntity> {
+  @Get(':postId')
+  async findOne(@Param('postId', ParseIntPipe) id: number): Promise<PostEntity> {
     return this.postsService.findPostById(id);
   }
 
-  @Get('user/:id')
-  async findPostByUserId(@Param('id') userId: number): Promise<PostEntity[]> {
+  @Get('user/:userId')
+  async findPostByUserId(@Param('userId') userId: number): Promise<PostEntity[]> {
     return this.postsService.findPostsByUserId(userId);
   }
 
@@ -63,25 +69,81 @@ export class PostsController {
     return post;
   }
 
-  @Put(':id')
+  @Put(':postId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Update, PostEntity)
   )
+  @UseInterceptors(FilesInterceptor('new_photos', postsConstants.maxImgCount, multerOptions))
   async update(
-    @Param('id') postId: number,
-    @Body() updatePostDto: UpdatePostDto
+    @Param('postId') postId: number,
+    @Body() updatePostDto: UpdatePostDto,
+    @UploadedFiles() files?: Express.Multer.File[]
   ): Promise<UpdateResult> {
-    return this.postsService.updatePost(postId, updatePostDto);
+    console.log(updatePostDto);
+    return this.postsService.updatePost(postId, updatePostDto, files);
   }
 
-  @Delete(':id')
+  @Delete(':postId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Delete, PostEntity)
   )
-  async remove(@Param('id') postId: number): Promise<DeleteResult> {
+  async remove(@Param('postId') postId: number): Promise<DeleteResult> {
     return this.postsService.removePost(postId);
+  }
+
+  // Likes
+
+  @Post('like/:postId')
+  @UseGuards(JwtAuthGuard)
+  async addLike(
+    @Param('postId', ParseIntPipe) postId: number,
+    @CurrentUser('id') userId: number
+  ): Promise<Like> {
+    return await this.postsService.addLike(postId, userId);
+  }
+
+  @Delete('like/:postId')
+  @UseGuards(JwtAuthGuard)
+  async removeLike(
+    @Param('postId', ParseIntPipe) postId: number,
+    @CurrentUser('id') userId: number
+  ): Promise<DeleteResult> {
+    return await this.postsService.removeLike(postId, userId);
+  }
+
+  // Comments
+
+  @Post(':postId/comment')
+  @UseGuards(JwtAuthGuard)
+  async addComment(
+    @Param('postId', ParseIntPipe) postId: number,
+    @CurrentUser('id') userId: number,
+    @Body() createCommentDto: CreateCommentDto
+  ): Promise<Commentary> {
+    return this.postsService.addComment(postId, userId, createCommentDto);
+  }
+
+  @Put(':postId/comment/:commentId')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Commentary))
+  async updateComment(
+    @Param(ParseIntPipe) params: { postId: number, commentId: number },
+    @CurrentUser('id') userId: number,
+    @Body() updateCommentDto: UpdateCommentDto
+  ): Promise<UpdateResult> {
+    return this.postsService.updateComment(params.postId, userId, params.commentId, updateCommentDto);
+  }
+
+  @Delete(':postId/comment/:commentId')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Commentary))
+  async removeComment(
+    @Param(ParseIntPipe) params: { postId: number, commentId: number },
+    @CurrentUser('id') userId: number
+  ): Promise<DeleteResult> {
+    return this.postsService.removeComment(params.postId, userId, params.commentId);
   }
 
   // TODO: Протестировать все роуты
