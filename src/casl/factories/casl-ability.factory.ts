@@ -6,8 +6,9 @@ import { PostEntity } from '../../posts/entities/post.entity';
 import { Commentary } from 'src/posts/entities/commentaries.entity';
 import { JwtStrategyValidateDto } from '../../authentication/dtos/jwt-strategy-validate.dto';
 import { UserService } from '../../users/users.service';
+import { PostPhotoEntity } from 'src/posts/entities/post-photo.entity';
 
-type Subjects = InferSubjects<typeof PostEntity | typeof User | typeof Commentary> | 'all';
+type Subjects = InferSubjects<typeof PostEntity | typeof User | typeof Commentary | typeof PostPhotoEntity> | 'all';
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 
@@ -30,8 +31,17 @@ export class CaslAbilityFactory {
     }
 
 
+    // Post
     cannot(Action.Update, PostEntity, { user });
+    cannot(Action.Delete, PostEntity, { user })
+
+    // Comment
     cannot(Action.Update, Commentary, { user });
+    cannot(Action.Delete, Commentary, { user })
+
+    // Post photos
+    cannot(Action.Update, PostPhotoEntity, { post: { user } })
+    cannot(Action.Delete, PostPhotoEntity, { post: { user } })
 
     return build({
       detectSubjectType: (item) =>

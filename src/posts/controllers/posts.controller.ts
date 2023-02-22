@@ -129,21 +129,23 @@ export class PostsController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Commentary))
   async updateComment(
-    @Param(ParseIntPipe) params: { postId: number, commentId: number },
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
     @CurrentUser('id') userId: number,
     @Body() updateCommentDto: UpdateCommentDto
   ): Promise<UpdateResult> {
-    return this.postsService.updateComment(params.postId, userId, params.commentId, updateCommentDto);
+    return this.postsService.updateComment(postId, userId, commentId, updateCommentDto);
   }
 
   @Delete(':postId/comment/:commentId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Commentary))
   async removeComment(
-    @Param(ParseIntPipe) params: { postId: number, commentId: number },
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
     @CurrentUser('id') userId: number
   ): Promise<DeleteResult> {
-    return this.postsService.removeComment(params.postId, userId, params.commentId);
+    return this.postsService.removeComment(postId, userId, commentId);
   }
 
   // TODO: Протестировать все роуты

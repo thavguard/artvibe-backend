@@ -79,7 +79,7 @@ export class PostsService {
   }
 
   async removePost(postId: number): Promise<DeleteResult> {
-    return this.postRepository.delete(postId);
+    return this.postRepository.delete(postId)
   }
 
 

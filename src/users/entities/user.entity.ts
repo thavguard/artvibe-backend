@@ -24,9 +24,9 @@ export class User extends AbstractEntity {
   @Column({ default: false })
   public isVerified: boolean;
 
-  @OneToMany(() => PostEntity, (post) => post.user)
-  public posts: PostEntity[];
-
   @Column({ default: false })
   public isAdmin: boolean;
+
+  @OneToMany(() => PostEntity, (post) => post.user, {onDelete: 'CASCADE'})
+  public posts: PostEntity[];
 }

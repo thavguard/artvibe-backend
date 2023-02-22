@@ -9,9 +9,9 @@ export class Commentary extends AbstractEntity {
     @JoinColumn()
     public text: string
 
-    @ManyToOne(() => PostEntity, (post) => post.commentaries)
+    @ManyToOne(() => PostEntity, (post) => post.commentaries, { onDelete: 'CASCADE' })
     public post: PostEntity
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
     public user: User
 }
