@@ -15,11 +15,13 @@ import { PostPhotosModule } from './posts/modules/post-photos.module';
 import { MulterModule } from './multer/multer.module';
 import { CommentariesModule } from './posts/modules/commentaries.module';
 import { MessagesModule } from './messages/messages.module';
+import { MessageModule } from './message-events/message.module';
 
 @Module({
   imports: [
     MulterModule,
     ConfigModule.forRoot({
+      isGlobal: true,
       validationSchema: Joi.object({
         PORT: Joi.number().required(),
         NODE_ENV: Joi.string()
@@ -42,7 +44,8 @@ import { MessagesModule } from './messages/messages.module';
     CaslModule,
     PostPhotosModule,
     CommentariesModule,
-    MessagesModule
+    MessagesModule,
+    MessageModule
   ],
   controllers: [AppController],
   providers: [AppService]
