@@ -1,8 +1,11 @@
-export enum MessageAction {
+export enum ServerAction {
   MsgToServer = 'msgToServer',
-  MsgToClient = 'msgToClient',
   JoinRoom = 'joinRoom',
+  LeaveRoom = 'leaveRoom'
+}
+
+export enum ClientAction {
+  MsgToClient = 'msgToClient',
   JoinedRoom = 'joinedRoom',
-  LeaveRoom = 'leaveRoom',
   LeftRoom = 'leftRoom'
 }

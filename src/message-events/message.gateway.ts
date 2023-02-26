@@ -8,30 +8,36 @@ import {
 import { Server } from 'ws';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { MessageAction } from './enums/message-actions.enum';
+import { ClientAction, ServerAction } from './enums/message-actions.enum';
+import { MessageDto } from './dtos/message.dto';
+import { UserService } from '../users/users.service';
 
 @WebSocketGateway({ namespace: '/chat' })
 export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  constructor(
+    private readonly userService: UserService
+  ) {
+  }
 
   @WebSocketServer() server: Server;
 
   private logger: Logger = new Logger('MessageGateway');
 
-  @SubscribeMessage(MessageAction.MsgToServer)
-  public handleMessage(client: Socket, payload: any): Promise<WsResponse<any>> {
-    return this.server.to(payload.room).emit(MessageAction.MsgToClient, payload);
+  @SubscribeMessage(ServerAction.MsgToServer)
+  public async handleMessage(client: Socket, payload: MessageDto): Promise<WsResponse<any>> {
+    return this.server.to(payload.roomId.toString()).emit(ClientAction.MsgToClient, payload);
   }
 
-  @SubscribeMessage(MessageAction.JoinRoom)
-  public joinRoom(client: Socket, room: string): void {
-    client.join(room);
-    client.emit(MessageAction.JoinedRoom, room);
+  @SubscribeMessage(ServerAction.JoinRoom)
+  public joinRoom(client: Socket, roomId: number): void {
+    client.join(roomId.toString());
+    client.emit(ClientAction.JoinedRoom, roomId);
   }
 
-  @SubscribeMessage(MessageAction.LeaveRoom)
-  public leaveRoom(client: Socket, room: string): void {
-    client.leave(room);
-    client.emit(MessageAction.LeftRoom);
+  @SubscribeMessage(ServerAction.LeaveRoom)
+  public leaveRoom(client: Socket, roomId: number): void {
+    client.leave(roomId.toString());
+    client.emit(ClientAction.LeftRoom);
   }
 
   public afterInit(server: Server): void {

@@ -11,8 +11,12 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const PORT = +configService.get<number>('PORT');
 
-  app.useWebSocketAdapter(new RedisIoAdapter(app));
-  
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis();
+
+  app.useWebSocketAdapter(redisIoAdapter);
+
+
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 

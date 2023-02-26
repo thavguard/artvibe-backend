@@ -1,9 +1,9 @@
-import { Column, Entity, Index, OneToMany } from "typeorm";
-import { AbstractEntity } from "../../common/entities/abstract.entity";
-import { Exclude } from "class-transformer";
-import { PostEntity } from "../../posts/entities/post.entity";
+import { Column, Entity, Index, OneToMany } from 'typeorm';
+import { AbstractEntity } from '../../common/entities/abstract.entity';
+import { Exclude } from 'class-transformer';
+import { PostEntity } from '../../posts/entities/post.entity';
 
-@Entity("users")
+@Entity('users')
 export class User extends AbstractEntity {
   @Column()
   public firstName: string;
@@ -27,6 +27,6 @@ export class User extends AbstractEntity {
   @Column({ default: false })
   public isAdmin: boolean;
 
-  @OneToMany(() => PostEntity, (post) => post.user, {onDelete: 'CASCADE'})
+  @OneToMany(() => PostEntity, (post) => post.user, { onDelete: 'CASCADE' })
   public posts: PostEntity[];
 }
