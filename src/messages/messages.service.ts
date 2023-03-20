@@ -22,6 +22,14 @@ export class MessagesService {
   ) {
   }
 
+  async getRoomById(roomId: number): Promise<MessageRoomEntity> {
+    return this.messageRoomRepository.findOneBy({ id: roomId });
+  }
+
+  async getRoomsByUserId(userId: number) {
+    // return  this.messageRoomRepository.findBy({users}) // TODO: fix it
+  }
+
   async createRoom(createRoomDto: CreateRoomDto): Promise<MessageRoomEntity> {
     const users: User[] = [];
 
@@ -44,12 +52,15 @@ export class MessagesService {
   }
 
   async getMessages(roomId: number): Promise<MessageEntity[]> {
-    const messageRoom = await this.messageRoomRepository.findOneBy({ id: roomId });
+    const messageRoom = await this.getRoomById(roomId);
     return this.messageRepository.findBy({ messageRoom });
   }
 
-  async addMessage(addMessageDto: CreateMessageDto): Promise<MessageEntity> {
-    const message = this.messageRepository.create(addMessageDto);
+  async saveMessage(userId: number, roomId: number, addMessageDto: CreateMessageDto): Promise<MessageEntity> {
+    const user = await this.userService.findOneById(userId);
+    const messageRoom = await this.getRoomById(roomId);
+
+    const message = this.messageRepository.create({ user, messageRoom, ...addMessageDto });
     return this.messageRepository.save(message);
   }
 

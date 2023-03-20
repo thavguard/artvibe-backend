@@ -5,11 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageEntity } from './entities/message.entity';
 import { MessageRoomEntity } from './entities/message-room.entity';
 import { UserModule } from '../users/users.module';
+import { MessagesGateway } from './messages.gateway';
+import { CaslModule } from '../casl/casl.module';
+import { AuthModule } from '../authentication/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MessageEntity, MessageRoomEntity]), UserModule],
+  imports: [TypeOrmModule.forFeature([MessageEntity, MessageRoomEntity]), UserModule, CaslModule, AuthModule],
   controllers: [MessagesController],
-  providers: [MessagesService]
+  providers: [MessagesService, MessagesGateway]
 })
 export class MessagesModule {
 }

@@ -1,14 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '../../users/entities/user.entity';
 import { AbilityBuilder, createMongoAbility, ExtractSubjectType, InferSubjects, MongoAbility } from '@casl/ability';
 import { Action } from '../../authentication/enums/post-actions.enum';
 import { PostEntity } from '../../posts/entities/post.entity';
 import { Commentary } from 'src/posts/entities/commentaries.entity';
-import { JwtStrategyValidateDto } from '../../authentication/dtos/jwt-strategy-validate.dto';
-import { UserService } from '../../users/users.service';
 import { PostPhotoEntity } from 'src/posts/entities/post-photo.entity';
+import { MessageEntity } from '../../messages/entities/message.entity';
+import { MessageRoomEntity } from '../../messages/entities/message-room.entity';
 
-type Subjects = InferSubjects<typeof PostEntity | typeof User | typeof Commentary | typeof PostPhotoEntity> | 'all';
+type Subjects =
+  InferSubjects<typeof PostEntity | typeof User | typeof Commentary | typeof PostPhotoEntity | typeof MessageRoomEntity>
+  | 'all';
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 
@@ -33,15 +35,18 @@ export class CaslAbilityFactory {
 
     // Post
     cannot(Action.Update, PostEntity, { user });
-    cannot(Action.Delete, PostEntity, { user })
+    cannot(Action.Delete, PostEntity, { user });
 
     // Comment
     cannot(Action.Update, Commentary, { user });
-    cannot(Action.Delete, Commentary, { user })
+    cannot(Action.Delete, Commentary, { user });
 
     // Post photos
-    cannot(Action.Update, PostPhotoEntity, { post: { user } })
-    cannot(Action.Delete, PostPhotoEntity, { post: { user } })
+    cannot(Action.Update, PostPhotoEntity, { post: { user } });
+    cannot(Action.Delete, PostPhotoEntity, { post: { user } });
+
+    // Messages
+    // cannot(Action.Read, MessageRoomEntity, { users: user });
 
     return build({
       detectSubjectType: (item) =>

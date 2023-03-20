@@ -66,4 +66,8 @@ export class AuthService {
       return null;
     }
   }
+
+  async verify(token: string): Promise<AuthPayloadDto> {
+    return this.jwtService.verify(token);
+  }
 }

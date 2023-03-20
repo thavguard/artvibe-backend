@@ -15,7 +15,6 @@ import { PostPhotosModule } from './posts/modules/post-photos.module';
 import { MulterModule } from './multer/multer.module';
 import { CommentariesModule } from './posts/modules/commentaries.module';
 import { MessagesModule } from './messages/messages.module';
-import { MessageModule } from './message-events/message.module';
 
 @Module({
   imports: [
@@ -45,7 +44,6 @@ import { MessageModule } from './message-events/message.module';
     PostPhotosModule,
     CommentariesModule,
     MessagesModule,
-    MessageModule
   ],
   controllers: [AppController],
   providers: [AppService]
