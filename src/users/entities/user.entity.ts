@@ -32,7 +32,7 @@ export class User extends AbstractEntity {
   @OneToMany(() => PostEntity, (post) => post.user, { onDelete: 'CASCADE' })
   public posts: PostEntity[];
 
-  @OneToMany(() => PhotoUserEntity, (entity) => entity.user, { onDelete: 'CASCADE', eager: true })
+  @OneToMany(() => PhotoUserEntity, (entity) => entity.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   public photos: PhotoUserEntity[]
 }

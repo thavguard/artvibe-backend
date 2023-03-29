@@ -12,6 +12,6 @@ export class Commentary extends AbstractEntity {
     @ManyToOne(() => PostEntity, (post) => post.commentaries, { onDelete: 'CASCADE' })
     public post: PostEntity
 
-    @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+    @ManyToOne(() => User, { onDelete: 'CASCADE' })
     public user: User
 }

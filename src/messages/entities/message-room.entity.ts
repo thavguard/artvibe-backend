@@ -12,6 +12,6 @@ export class MessageRoomEntity extends AbstractEntity {
   @JoinTable()
   public users: User[];
 
-  @OneToMany(() => MessageEntity, (message) => message.messageRoom, { eager: true, onDelete: 'CASCADE' })
+  @OneToMany(() => MessageEntity, (message) => message.messageRoom, { onDelete: 'CASCADE' })
   public messages: MessageEntity[];
 }

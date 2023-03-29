@@ -5,11 +5,11 @@ import { User } from "../../users/entities/user.entity";
 
 @Entity("likes")
 export class Like extends AbstractEntity {
-  @ManyToOne(() => PostEntity, (post) => post.likes, {onDelete: 'CASCADE'})
+  @ManyToOne(() => PostEntity, (post) => post.likes, { onDelete: 'CASCADE' })
   @JoinColumn()
   public post: PostEntity;
 
-  @OneToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   public user: User;
 }

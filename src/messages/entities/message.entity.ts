@@ -11,7 +11,7 @@ export class MessageEntity extends AbstractEntity {
   @Column({ default: false })
   public isEdited: boolean;
 
-  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
   public user: User;
 
   @ManyToOne(() => MessageRoomEntity, (room) => room.messages, { onDelete: 'CASCADE', nullable: false })
