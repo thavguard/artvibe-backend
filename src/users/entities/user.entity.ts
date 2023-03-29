@@ -1,7 +1,8 @@
-import { Column, Entity, Index, OneToMany } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { AbstractEntity } from '../../common/entities/abstract.entity';
 import { Exclude } from 'class-transformer';
 import { PostEntity } from '../../posts/entities/post.entity';
+import { PhotoUserEntity } from './photo-user.entity';
 
 @Entity('users')
 export class User extends AbstractEntity {
@@ -18,8 +19,9 @@ export class User extends AbstractEntity {
   @Exclude()
   public password: string;
 
-  @Column({ nullable: true })
-  public avatar: string;
+  @OneToOne(() => PhotoUserEntity, (photo) => photo.user)
+  @JoinColumn()
+  public avatar: PhotoUserEntity;
 
   @Column({ default: false })
   public isVerified: boolean;
@@ -29,4 +31,8 @@ export class User extends AbstractEntity {
 
   @OneToMany(() => PostEntity, (post) => post.user, { onDelete: 'CASCADE' })
   public posts: PostEntity[];
+
+  @OneToMany(() => PhotoUserEntity, (entity) => entity.user, { onDelete: 'CASCADE', eager: true })
+  @JoinColumn()
+  public photos: PhotoUserEntity[]
 }

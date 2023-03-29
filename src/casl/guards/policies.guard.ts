@@ -6,7 +6,7 @@ import {
 } from '../factories/casl-ability.factory';
 import { CHECK_POLICIES_KEY } from '../decorators/check-policies.decorator';
 import { PolicyHandler } from '../casl.types';
-import { UserService } from '../../users/users.service';
+import { UserService } from 'src/users/services/users.service';
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -26,8 +26,8 @@ export class PoliciesGuard implements CanActivate {
       ) || [];
 
     const { user } = context.switchToHttp().getRequest();
-    const allUser = await this.userService.findOneById(user.id);
-    const ability = await this.caslAbilityFactory.createForUser(allUser);
+    const fullUser = await this.userService.findOneById(user.id);
+    const ability = await this.caslAbilityFactory.createForUser(fullUser);
 
     return policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability)

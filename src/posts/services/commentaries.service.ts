@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserService } from "src/users/users.service";
+import { UserService } from "src/users/services/users.service";
 import { DeleteResult, Repository, UpdateResult } from "typeorm";
 import { CreateCommentDto } from "../dtos/create-comment.dto";
 import { UpdateCommentDto } from "../dtos/update-comment.dto";

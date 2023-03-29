@@ -3,7 +3,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import { Like } from './../entities/like.entity';
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserService } from 'src/users/users.service';
+import { UserService } from 'src/users/services/users.service';
 
 @Injectable()
 export class LikesService {

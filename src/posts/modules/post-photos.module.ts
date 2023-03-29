@@ -6,7 +6,7 @@ import { PostsModule } from './posts.module';
 import { PostEntity } from '../entities/post.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PostPhotoEntity, PostEntity])],
+  imports: [TypeOrmModule.forFeature([PostPhotoEntity, PostEntity]),],
   providers: [PostPhotosService],
   exports: [PostPhotosService]
 })

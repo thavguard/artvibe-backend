@@ -4,7 +4,7 @@ import { PostsController } from '../controllers/posts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from '../entities/post.entity';
 import { CaslModule } from '../../casl/casl.module';
-import { UserModule } from '../../users/users.module';
+import { UserModule } from '../../users/modules/users.module';
 import { PostPhotosModule } from './post-photos.module';
 import { LikesModule } from './likes.module';
 import { CommentariesModule } from './commentaries.module';

@@ -5,7 +5,9 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegistrationDto } from './dtos/registration.dto';
@@ -14,6 +16,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { CurrentUser } from './decorators/current-user-id.decorator';
 import { RegistrationResponseDto } from './dtos/registration-response.dto';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/multer/configs/multer.config';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +26,12 @@ export class AuthController {
 
   @Post('registration')
   @HttpCode(HttpStatus.OK)
-  async registration(@Body() registrationDto: RegistrationDto): Promise<RegistrationResponseDto> {
-    return this.authService.registration(registrationDto);
+  @UseInterceptors(FileInterceptor('avatar', multerOptions))
+  async registration(
+    @Body() registrationDto: RegistrationDto,
+    @UploadedFile() avatar?: Express.Multer.File
+  ): Promise<RegistrationResponseDto> {
+    return this.authService.registration(registrationDto, avatar);
   }
 
   @UseGuards(LocalAuthGuard)

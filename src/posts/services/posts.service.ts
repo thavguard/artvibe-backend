@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { UpdatePostDto } from '../dtos/update-post.dto';
-import { UserService } from '../../users/users.service';
 import { PostPhotosService } from './post-photos.service';
 import { Like } from '../entities/like.entity';
 import { LikesService } from './likes.service';
@@ -13,6 +12,8 @@ import { Commentary } from '../entities/commentaries.entity';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
 import { PostPhotoEntity } from '../entities/post-photo.entity';
+import { UserService } from 'src/users/services/users.service';
+import { number } from '@hapi/joi';
 
 @Injectable()
 export class PostsService {
@@ -34,7 +35,37 @@ export class PostsService {
 
   async findPostById(postId: number): Promise<PostEntity> {
     return await this.postRepository.findOne({
-      where: { id: postId }
+      where: { id: postId },
+      relations: {
+        user: true,
+        photos: true,
+        likes: true,
+        commentaries: true
+      },
+      select: {
+        user: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          avatar: {
+            id: true,
+            filename: true
+          },
+        },
+        likes: {
+          id: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        photos: {
+          id: true,
+          filename: true,
+        },
+
+      }
     });
   }
 

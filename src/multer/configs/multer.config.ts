@@ -3,13 +3,14 @@ import * as path from 'path';
 import { diskStorage } from 'multer';
 import * as uuid from 'uuid';
 import * as fs from 'fs';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
 export const multerConfig = {
   dest: './uploads',
   maxSize: 30e7
 };
 
-export const multerOptions = {
+export const multerOptions: MulterOptions = {
   limits: {
     fileSize: multerConfig.maxSize
   },

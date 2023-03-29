@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../../users/entities/user.entity';
-import { AbilityBuilder, createMongoAbility, ExtractSubjectType, InferSubjects, MongoAbility } from '@casl/ability';
+import { AbilityBuilder, createMongoAbility, ExtractSubjectType, FieldMatcher, InferSubjects, MongoAbility } from '@casl/ability';
 import { Action } from '../../authentication/enums/post-actions.enum';
 import { PostEntity } from '../../posts/entities/post.entity';
 import { Commentary } from 'src/posts/entities/commentaries.entity';
@@ -14,6 +14,9 @@ type Subjects =
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 
+export const fieldMatcher: FieldMatcher = fields => field => fields.includes(field);
+
+
 @Injectable()
 export class CaslAbilityFactory {
   constructor() {
@@ -25,12 +28,16 @@ export class CaslAbilityFactory {
       createMongoAbility
     );
 
-    console.log(user);
+    console.log({ user });
     if (user.isAdmin) {
       can(Action.Manage, 'all');
     } else {
       can(Action.Read, 'all');
     }
+
+    // User
+    cannot(Action.Update, User, { id: user.id })
+    cannot(Action.Delete, User, { id: user.id })
 
 
     // Post
@@ -45,12 +52,18 @@ export class CaslAbilityFactory {
     cannot(Action.Update, PostPhotoEntity, { post: { user } });
     cannot(Action.Delete, PostPhotoEntity, { post: { user } });
 
+
     // Messages
-    // cannot(Action.Read, MessageRoomEntity, { users: user });
+    cannot(Action.Read, MessageRoomEntity, {
+      users: {
+        $elemMatch: {
+          email: user.email,
+        }
+      }
+    });
 
     return build({
-      detectSubjectType: (item) =>
-        item.constructor as ExtractSubjectType<Subjects>
+      detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>
     });
   }
 }

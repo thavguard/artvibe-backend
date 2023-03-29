@@ -16,6 +16,7 @@ export class MessageEntity extends AbstractEntity {
 
   @ManyToOne(() => MessageRoomEntity, (room) => room.messages, { onDelete: 'CASCADE', nullable: false })
   public messageRoom: MessageRoomEntity;
+
 }
 
 

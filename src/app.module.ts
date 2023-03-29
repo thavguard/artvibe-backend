@@ -2,7 +2,7 @@ import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './users/users.module';
+import { UserModule } from './users/modules/users.module';
 import { AuthModule } from './authentication/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { NODE_ENV } from './app.constant';
@@ -15,6 +15,7 @@ import { PostPhotosModule } from './posts/modules/post-photos.module';
 import { MulterModule } from './multer/multer.module';
 import { CommentariesModule } from './posts/modules/commentaries.module';
 import { MessagesModule } from './messages/messages.module';
+import { PhotoUserModule } from './users/modules/photo-user.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { MessagesModule } from './messages/messages.module';
     PostPhotosModule,
     CommentariesModule,
     MessagesModule,
+    PhotoUserModule
   ],
   controllers: [AppController],
   providers: [AppService]

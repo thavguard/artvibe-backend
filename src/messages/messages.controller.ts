@@ -24,8 +24,8 @@ export class MessagesController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, MessageRoomEntity))
   async getMessages(
     @Param('roomId', ParseIntPipe) roomId: number
-  ): Promise<MessageEntity[]> {
-    return this.messagesService.getMessages(roomId);
+  ): Promise<MessageRoomEntity> {
+    return await this.messagesService.getMessages(roomId);
   }
 
   @Post('/room')

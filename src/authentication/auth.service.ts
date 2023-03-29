@@ -1,5 +1,4 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { UserService } from '../users/users.service';
 import { RegistrationDto } from './dtos/registration.dto';
 import { User } from '../users/entities/user.entity';
 import { DataSource } from 'typeorm';
@@ -10,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { AuthPayloadDto } from './dtos/auth-payload.dto';
 import { RegistrationResponseDto } from './dtos/registration-response.dto';
+import { UserService } from 'src/users/services/users.service';
 
 @Injectable()
 export class AuthService {
@@ -20,13 +20,15 @@ export class AuthService {
   ) {
   }
 
-  async registration(registrationDto: RegistrationDto): Promise<RegistrationResponseDto> {
+  async registration(registrationDto: RegistrationDto, avatar?: Express.Multer.File) {
     let user: User;
     let payload: AuthPayloadDto;
 
     try {
-      user = await this.usersService.create(registrationDto);
+      user = await this.usersService.create(registrationDto, avatar);
       payload = { email: user.email, sub: user.id };
+
+      user = await this.usersService.findOneById(user.id)
     } catch (error) {
       console.log(error);
 
@@ -38,7 +40,8 @@ export class AuthService {
     }
 
     return {
-      access_token: this.jwtService.sign(payload)
+      access_token: this.jwtService.sign(payload),
+      user
     };
   }
 

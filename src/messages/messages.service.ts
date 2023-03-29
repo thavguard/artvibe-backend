@@ -7,9 +7,9 @@ import { User } from '../users/entities/user.entity';
 import { CreateRoomDto } from './dtos/create-room.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { CreateMessageDto } from './dtos/create-message.dto';
-import { UserService } from '../users/users.service';
 import { use } from 'passport';
 import { UpdateMessageDto } from './dtos/update-message.dto';
+import { UserService } from 'src/users/services/users.service';
 
 @Injectable()
 export class MessagesService {
@@ -23,7 +23,19 @@ export class MessagesService {
   }
 
   async getRoomById(roomId: number): Promise<MessageRoomEntity> {
-    return this.messageRoomRepository.findOneBy({ id: roomId });
+    return this.messageRoomRepository.findOne({
+      where: { id: roomId }, relations: {
+        users: true
+      }, select: {
+        users: {
+          id: true,
+          email: true,
+          firstName: true,
+          isAdmin: true,
+          lastName: true,
+        }
+      }
+    });
   }
 
   async getRoomsByUserId(userId: number) {
@@ -51,9 +63,8 @@ export class MessagesService {
     return this.messageRoomRepository.delete(roomId);
   }
 
-  async getMessages(roomId: number): Promise<MessageEntity[]> {
-    const messageRoom = await this.getRoomById(roomId);
-    return this.messageRepository.findBy({ messageRoom });
+  async getMessages(roomId: number): Promise<MessageRoomEntity> {
+    return await this.getRoomById(roomId);
   }
 
   async saveMessage(userId: number, roomId: number, addMessageDto: CreateMessageDto): Promise<MessageEntity> {

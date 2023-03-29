@@ -4,7 +4,7 @@ import { MessagesService } from './messages.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageEntity } from './entities/message.entity';
 import { MessageRoomEntity } from './entities/message-room.entity';
-import { UserModule } from '../users/users.module';
+import { UserModule } from '../users/modules/users.module';
 import { MessagesGateway } from './messages.gateway';
 import { CaslModule } from '../casl/casl.module';
 import { AuthModule } from '../authentication/auth.module';

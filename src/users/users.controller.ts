@@ -1,10 +1,10 @@
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { Body, Controller, Delete, Get, Param, Patch } from "@nestjs/common";
-import { UserService } from "./users.service";
+import { UserService } from "./services/users.service";
 
 @Controller("users")
 export class UserController {
-  constructor(private readonly usersService: UserService) {}
+  constructor(private readonly usersService: UserService) { }
 
   @Get()
   getAll() {

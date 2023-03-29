@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -8,9 +8,10 @@ import {
   WebSocketServer
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { JwtAuthGuard } from 'src/authentication/guards/jwt-auth.guard';
+import { UserService } from 'src/users/services/users.service';
 import { Server } from 'ws';
 import { AuthService } from '../authentication/auth.service';
-import { UserService } from '../users/users.service';
 import { MessageDto } from './dtos/message.dto';
 import { ClientAction, ServerAction } from './enums/message-actions.enum';
 import { MessagesService } from './messages.service';
@@ -28,6 +29,7 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   private logger: Logger = new Logger('MessagesGateway');
 
+  // @UseGuards(JwtAuthGuard)
   @SubscribeMessage(ServerAction.MsgToServer)
   public async handleMessage(client: Socket, payload: MessageDto): Promise<boolean> {
 
@@ -37,7 +39,12 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
     const userId = jwtPayload.sub;
 
-    await this.messageService.saveMessage(userId, payload.roomId, { message: payload.body });
+    console.log({ userId });
+    console.log(payload.roomId);
+    console.log(payload.message);
+
+
+    await this.messageService.saveMessage(userId, payload.roomId, { message: payload.message });
 
 
     return client.to(payload.roomId?.toString()).emit(ClientAction.MsgToClient, { ...payload, userId });
