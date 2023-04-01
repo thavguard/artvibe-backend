@@ -8,7 +8,6 @@ import { UpdateProfileDto } from "./dtos/update-profile.dto";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "src/multer/configs/multer.config";
 import { UpdateAvatarDto } from "./dtos/update-avatar.dto";
-import { Action } from "src/authentication/enums/post-actions.enum";
 import { profileConstants } from "./constants/profile.const";
 import { PhotoUserEntity } from "src/users/entities/photo-user.entity";
 
@@ -21,6 +20,28 @@ export class ProfileController {
   async getCurrentProfile(@CurrentUser("id") userId: number): Promise<User> {
     return this.userService.findOneById(userId);
   }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Put('current')
+  async updateProfile(
+    @CurrentUser('id') profileId: number,
+    @Body() updateProfileDto: UpdateProfileDto
+  ): Promise<UpdateResult> {
+    return this.userService.update(profileId, updateProfileDto)
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('photos', profileConstants.maxImgCount, multerOptions))
+  @Post('current/photos')
+  async updatePhoto(
+    @CurrentUser('id') profileId: number,
+    @UploadedFiles() photos: Express.Multer.File[]
+  ): Promise<PhotoUserEntity[]> {
+    return this.userService.addPhotos(profileId, photos)
+  }
+
 
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
@@ -35,6 +56,16 @@ export class ProfileController {
     return this.userService.updateAvatar(userId, avatar, updateAvatarDto)
   }
 
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('current')
+  async removeProfile(
+    @CurrentUser('id') profileId: number
+  ): Promise<DeleteResult> {
+    return this.userService.remove(profileId)
+  }
+
+
   @Get(':id')
   async getById(
     @Param('id') id: number,
@@ -43,37 +74,4 @@ export class ProfileController {
     return this.userService.findOneById(id)
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Put(':profileId')
-  async updateProfile(
-    @Param('profileId') profileId: number,
-    @Body() updateProfileDto: UpdateProfileDto
-  ): Promise<UpdateResult> {
-    return this.userService.update(profileId, updateProfileDto)
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FileInterceptor('avatar', multerOptions)
-  )
-
-
-
-  @UseGuards(JwtAuthGuard)
-  @Delete(':profileId')
-  async removeProfile(
-    @Param('profileId') profileId: number
-  ): Promise<DeleteResult> {
-    return this.userService.remove(profileId)
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('photos', profileConstants.maxImgCount, multerOptions))
-  @Post(':profileId/photos')
-  async updatePhoto(
-    @Param('profileId') profileId: number,
-    @UploadedFiles() photos: Express.Multer.File[]
-  ): Promise<PhotoUserEntity[]> {
-    return this.userService.addPhotos(profileId, photos)
-  }
 }
