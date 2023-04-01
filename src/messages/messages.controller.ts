@@ -4,10 +4,6 @@ import { MessageEntity } from './entities/message.entity';
 import { CreateRoomDto } from './dtos/create-room.dto';
 import { MessageRoomEntity } from './entities/message-room.entity';
 import { JwtAuthGuard } from '../authentication/guards/jwt-auth.guard';
-import { PoliciesGuard } from '../casl/guards/policies.guard';
-import { CheckPolicies } from '../casl/decorators/check-policies.decorator';
-import { AppAbility } from '../casl/factories/casl-ability.factory';
-import { Action } from '../authentication/enums/post-actions.enum';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 

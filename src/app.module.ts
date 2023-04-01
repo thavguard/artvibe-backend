@@ -10,7 +10,6 @@ import { DatabaseModule } from './database/database.module';
 import { ProfileModule } from './profile/profile.module';
 import { PostsModule } from './posts/modules/posts.module';
 import { LikesModule } from './posts/modules/likes.module';
-import { CaslModule } from './casl/casl.module';
 import { PostPhotosModule } from './posts/modules/post-photos.module';
 import { MulterModule } from './multer/multer.module';
 import { CommentariesModule } from './posts/modules/commentaries.module';
@@ -41,7 +40,6 @@ import { PhotoUserModule } from './users/modules/photo-user.module';
     ProfileModule,
     PostsModule,
     LikesModule,
-    CaslModule,
     PostPhotosModule,
     CommentariesModule,
     MessagesModule,

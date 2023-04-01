@@ -16,7 +16,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { CurrentUser } from './decorators/current-user-id.decorator';
 import { RegistrationResponseDto } from './dtos/registration-response.dto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/multer/configs/multer.config';
 
 @Controller('auth')

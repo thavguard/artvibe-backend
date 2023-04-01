@@ -13,7 +13,7 @@ export class UserController {
 
   @Get(":id")
   getOneById(@Param("id") id: string) {
-    return this.usersService.findByEmail(id);
+    return this.usersService.findOneById(+id);
   }
 
   @Patch(":id")
