@@ -70,10 +70,7 @@ export class PostsController {
   }
 
   @Put(':postId')
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, PostEntity)
-  )
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('new_photos', postsConstants.maxImgCount, multerOptions))
   async update(
     @Param('postId') postId: number,
@@ -85,10 +82,7 @@ export class PostsController {
   }
 
   @Delete(':postId')
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Delete, PostEntity)
-  )
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('postId') postId: number): Promise<DeleteResult> {
     return this.postsService.removePost(postId);
   }
@@ -126,8 +120,7 @@ export class PostsController {
   }
 
   @Put(':postId/comment/:commentId')
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Commentary))
+  @UseGuards(JwtAuthGuard)
   async updateComment(
     @Param('postId', ParseIntPipe) postId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
@@ -138,8 +131,7 @@ export class PostsController {
   }
 
   @Delete(':postId/comment/:commentId')
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Commentary))
+  @UseGuards(JwtAuthGuard)
   async removeComment(
     @Param('postId', ParseIntPipe) postId: number,
     @Param('commentId', ParseIntPipe) commentId: number,

@@ -20,8 +20,7 @@ export class MessagesController {
   }
 
   @Get('/room/:roomId')
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, MessageRoomEntity))
+  @UseGuards(JwtAuthGuard)
   async getMessages(
     @Param('roomId', ParseIntPipe) roomId: number
   ): Promise<MessageRoomEntity> {

@@ -33,10 +33,7 @@ export class ProfileController {
     return this.userService.findOneById(id)
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, User)
-  )
+  @UseGuards(JwtAuthGuard)
   @Put(':profileId')
   async updateProfile(
     @Param('profileId') profileId: number,
@@ -45,13 +42,11 @@ export class ProfileController {
     return this.userService.update(profileId, updateProfileDto)
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('avatar', multerOptions)
   )
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, User)
-  )
+
   @Put(':profileId/avatar')
   async updateAvatar(
     @Param('profileId') profileId: number,
@@ -61,8 +56,7 @@ export class ProfileController {
     return this.userService.updateAvatar(profileId, avatar, updateAvatarDto)
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, User))
+  @UseGuards(JwtAuthGuard)
   @Delete(':profileId')
   async removeProfile(
     @Param('profileId') profileId: number
@@ -70,9 +64,8 @@ export class ProfileController {
     return this.userService.remove(profileId)
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('photos', profileConstants.maxImgCount, multerOptions))
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   @Post(':profileId/photos')
   async updatePhoto(
     @Param('profileId') profileId: number,
