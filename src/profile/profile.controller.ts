@@ -22,6 +22,19 @@ export class ProfileController {
     return this.userService.findOneById(userId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', multerOptions)
+  )
+  @Put('current/avatar')
+  async updateAvatar(
+    @CurrentUser("id") userId: number,
+    @UploadedFile() avatar?: Express.Multer.File,
+    @Body() updateAvatarDto?: UpdateAvatarDto
+  ): Promise<UpdateResult> {
+    return this.userService.updateAvatar(userId, avatar, updateAvatarDto)
+  }
+
   @Get(':id')
   async getById(
     @Param('id') id: number,
@@ -44,14 +57,7 @@ export class ProfileController {
     FileInterceptor('avatar', multerOptions)
   )
 
-  @Put(':profileId/avatar')
-  async updateAvatar(
-    @Param('profileId') profileId: number,
-    @UploadedFile() avatar?: Express.Multer.File,
-    @Body() updateAvatarDto?: UpdateAvatarDto
-  ): Promise<UpdateResult> {
-    return this.userService.updateAvatar(profileId, avatar, updateAvatarDto)
-  }
+
 
   @UseGuards(JwtAuthGuard)
   @Delete(':profileId')
