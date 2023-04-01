@@ -1,17 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { User } from "../users/entities/user.entity";
 import { JwtAuthGuard } from "../authentication/guards/jwt-auth.guard";
 import { CurrentUser } from "../authentication/decorators/current-user-id.decorator";
 import { UserService } from "src/users/services/users.service";
 import { DeleteResult, UpdateResult } from "typeorm";
 import { UpdateProfileDto } from "./dtos/update-profile.dto";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "src/multer/configs/multer.config";
 import { UpdateAvatarDto } from "./dtos/update-avatar.dto";
 import { PoliciesGuard } from "src/casl/guards/policies.guard";
 import { CheckPolicies } from "src/casl/decorators/check-policies.decorator";
 import { AppAbility } from "src/casl/factories/casl-ability.factory";
 import { Action } from "src/authentication/enums/post-actions.enum";
+import { profileConstants } from "./constants/profile.const";
+import { PhotoUserEntity } from "src/users/entities/photo-user.entity";
 
 @Controller("profile")
 export class ProfileController {
@@ -66,5 +68,16 @@ export class ProfileController {
     @Param('profileId') profileId: number
   ): Promise<DeleteResult> {
     return this.userService.remove(profileId)
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseInterceptors(FilesInterceptor('photos', profileConstants.maxImgCount, multerOptions))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
+  @Post(':profileId/photos')
+  async updatePhoto(
+    @Param('profileId') profileId: number,
+    @UploadedFiles() photos: Express.Multer.File[]
+  ): Promise<PhotoUserEntity[]> {
+    return this.userService.addPhotos(profileId, photos)
   }
 }

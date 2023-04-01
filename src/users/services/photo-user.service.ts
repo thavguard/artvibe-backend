@@ -39,6 +39,12 @@ export class PhotoUserService {
         return savedPhoto
     }
 
+    async addPhotos(userId: number, files: Express.Multer.File[]): Promise<PhotoUserEntity[]> {
+        const promises = files.map(file => this.addPhoto(userId, file))
+
+        return await Promise.all(promises)
+    }
+
     async removePhoto(userId: number, photoId: number): Promise<DeleteResult> {
         const user = await this.userRepository.findOneBy({ id: userId })
         return this.PhotoUserRepository.delete({ user, id: photoId })

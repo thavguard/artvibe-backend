@@ -28,7 +28,8 @@ export class CaslAbilityFactory {
       createMongoAbility
     );
 
-    console.log({ user });
+    console.log(user)
+
     if (user.isAdmin) {
       can(Action.Manage, 'all');
     } else {
@@ -36,8 +37,8 @@ export class CaslAbilityFactory {
     }
 
     // User
-    cannot(Action.Update, User, { id: user.id })
-    cannot(Action.Delete, User, { id: user.id })
+    // cannot(Action.Update, User, { id: user.id })
+    // cannot(Action.Delete, User, { id: user.id })
 
 
     // Post

@@ -23,7 +23,7 @@ export class UserService {
   }
 
   async findOneById(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id }, relations: { avatar: true, } });
+    return this.userRepository.findOne({ where: { id }, relations: { avatar: true, photos: true } });
   }
 
   async findByEmail(email: string): Promise<User> {
@@ -58,6 +58,14 @@ export class UserService {
       : await this.photoUserService.addPhoto(userId, file)
 
     return this.userRepository.update({ id: userId }, { avatar })
+  }
+
+  async addPhoto(userId: number, photo: Express.Multer.File): Promise<PhotoUserEntity> {
+    return this.photoUserService.addPhoto(userId, photo)
+  }
+
+  async addPhotos(userId: number, photos: Express.Multer.File[]): Promise<PhotoUserEntity[]> {
+    return this.photoUserService.addPhotos(userId, photos)
   }
 
   async remove(id: number) {
