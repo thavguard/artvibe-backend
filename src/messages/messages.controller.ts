@@ -38,13 +38,19 @@ export class MessagesController {
     return this.messagesService.updateRoom(roomId, updateRoomDto);
   }
 
-  @Delete('/room/:roodId')
+  @Delete('/room/:roomId')
   @UseGuards(JwtAuthGuard)
   async removeRoom(
-    @Param('roomId') roomId: number
+    @Param('roomId', ParseIntPipe) roomId: number
   ): Promise<DeleteResult> {
     return this.messagesService.removeRoom(roomId);
   }
 
-
+  @Get('/room/user/:userId')
+  @UseGuards(JwtAuthGuard)
+  async getRoomsByUserId(
+    @Param('userId', ParseIntPipe) userId: number
+  ): Promise<MessageRoomEntity[]> {
+    return this.messagesService.getRoomsByUserId(userId)
+  }
 }

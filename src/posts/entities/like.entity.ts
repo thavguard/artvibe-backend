@@ -9,7 +9,7 @@ export class Like extends AbstractEntity {
   @JoinColumn()
   public post: PostEntity;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, { onDelete: 'CASCADE', })
   @JoinColumn()
   public user: User;
 }

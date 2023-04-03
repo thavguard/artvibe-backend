@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PostEntity } from '../entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -14,6 +14,10 @@ import { UpdateCommentDto } from '../dtos/update-comment.dto';
 import { PostPhotoEntity } from '../entities/post-photo.entity';
 import { UserService } from 'src/users/services/users.service';
 import { number } from '@hapi/joi';
+import { selectUserDto } from 'src/users/dtos/select-user.dto';
+import { selectPostDto } from '../dtos/select-post.dto';
+import { PostgresErrorCode } from 'src/database/constraints/errors.constraint';
+import { LikeAlreadyExistException } from '../exceptions/like-already-exist.exception';
 
 @Injectable()
 export class PostsService {
@@ -30,7 +34,19 @@ export class PostsService {
   // Post
 
   async findAll(): Promise<PostEntity[]> {
-    return this.postRepository.find();
+    return this.postRepository.find({
+      relations: {
+        user: true,
+        photos: true,
+        likes: {
+          user: {
+            avatar: true
+          },
+        },
+        commentaries: true
+      },
+      select: selectPostDto
+    });
   }
 
   async findPostById(postId: number): Promise<PostEntity> {
@@ -42,30 +58,7 @@ export class PostsService {
         likes: true,
         commentaries: true
       },
-      select: {
-        user: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          avatar: {
-            id: true,
-            filename: true
-          },
-        },
-        likes: {
-          id: true,
-          user: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        photos: {
-          id: true,
-          filename: true,
-        },
-
-      }
+      select: selectPostDto
     });
   }
 
@@ -117,7 +110,15 @@ export class PostsService {
   // Likes
 
   async addLike(postId: number, userId: number): Promise<Like> {
-    return await this.likeService.addLike(postId, userId);
+    try {
+      return await this.likeService.addLike(postId, userId);
+    } catch (error) {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
+        throw new LikeAlreadyExistException()
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 
   async removeLike(postId: number, userId: number): Promise<DeleteResult> {

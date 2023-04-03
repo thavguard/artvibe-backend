@@ -8,6 +8,9 @@ export class MessageRoomEntity extends AbstractEntity {
   @Column()
   public name: string;
 
+  @Column({ nullable: false })
+  public isPrivate: boolean
+
   @ManyToMany(() => User)
   @JoinTable()
   public users: User[];

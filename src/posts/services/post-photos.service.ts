@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { PostPhotosModule } from '../modules/post-photos.module';
 import { PostEntity } from '../entities/post.entity';
+import { selectPostDto } from '../dtos/select-post.dto';
 
 @Injectable()
 export class PostPhotosService {
@@ -29,7 +30,18 @@ export class PostPhotosService {
   }
 
   async updatePhotos(postId: number, files?: Express.Multer.File[], photos?: PostPhotoEntity[]): Promise<boolean> {
-    const post = await this.postRepository.findOneBy({ id: postId });
+    const post = await this.postRepository.findOne({
+      where: { id: postId }, relations: {
+        user: true,
+        photos: true,
+        likes: true,
+        commentaries: true
+      },
+      select: selectPostDto
+    });
+
+    console.log(post);
+
 
     for (let i = 0; i < post.photos.length; i++) {
       const photoMatch = photos.find(item => item.id === post.photos[i].id);

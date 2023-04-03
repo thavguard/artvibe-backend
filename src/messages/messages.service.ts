@@ -10,6 +10,8 @@ import { CreateMessageDto } from './dtos/create-message.dto';
 import { use } from 'passport';
 import { UpdateMessageDto } from './dtos/update-message.dto';
 import { UserService } from 'src/users/services/users.service';
+import { PrivateRoomException } from './exceptions/private-room.exception';
+import { selectUserDto } from 'src/users/dtos/select-user.dto';
 
 @Injectable()
 export class MessagesService {
@@ -25,33 +27,39 @@ export class MessagesService {
   async getRoomById(roomId: number): Promise<MessageRoomEntity> {
     return this.messageRoomRepository.findOne({
       where: { id: roomId }, relations: {
-        users: true
-      }, select: {
-        users: {
-          id: true,
-          email: true,
-          firstName: true,
-          isAdmin: true,
-          lastName: true,
+        users: true,
+        messages: {
+          messageRoom: true,
+          user: true,
         }
+      }, select: {
+        users: selectUserDto,
       }
     });
   }
 
-  async getRoomsByUserId(userId: number) {
-    // return  this.messageRoomRepository.findBy({users}) // TODO: fix it
+  async getRoomsByUserId(userId: number): Promise<MessageRoomEntity[]> {
+    return this.messageRoomRepository.find({
+      where: {
+        users: {
+          id: userId
+        }
+      },
+    })
   }
 
   async createRoom(createRoomDto: CreateRoomDto): Promise<MessageRoomEntity> {
-    const users: User[] = [];
 
-    for (const userId in createRoomDto.userIds) {
-      const user = await this.userService.findOneById(+userId);
-
-      users.push(user);
+    if (createRoomDto.isPrivate && createRoomDto.userIds.length > 2) {
+      throw new PrivateRoomException()
     }
 
-    const room = await this.messageRoomRepository.create({ users, ...createRoomDto });
+    const promises = createRoomDto.userIds.map(userId => this.userService.findOneById(userId))
+
+    const users = await Promise.all(promises)
+
+
+    const room = this.messageRoomRepository.create({ users, ...createRoomDto });
     return this.messageRoomRepository.save(room);
   }
 

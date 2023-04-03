@@ -137,5 +137,4 @@ export class PostsController {
     return this.postsService.removeComment(postId, userId, commentId);
   }
 
-  // TODO: Протестировать все роуты
 }

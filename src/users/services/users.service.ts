@@ -7,6 +7,7 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 import { PhotoUserEntity } from '../entities/photo-user.entity';
 import { User } from '../entities/user.entity';
 import { PhotoUserService } from './photo-user.service';
+import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 
 @Injectable()
 export class UserService {
@@ -23,7 +24,13 @@ export class UserService {
   }
 
   async findOneById(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id }, relations: { avatar: true, photos: true } });
+    const user = await this.userRepository.findOne({ where: { id }, relations: { avatar: true, photos: true } });
+
+    if (!user) {
+      throw new UserNotFoundException(id)
+    }
+
+    return user
   }
 
   async findByEmail(email: string): Promise<User> {
