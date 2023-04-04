@@ -65,5 +65,4 @@ POSTGRES_DB=
 
 # JWT Secret
 JWT_SECRET=
-
 ```
