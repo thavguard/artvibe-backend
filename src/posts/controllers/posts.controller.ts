@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param, ParseFilePipeBuilder,
   ParseIntPipe,
@@ -28,6 +29,9 @@ import { Like } from '../entities/like.entity';
 import { Commentary } from '../entities/commentaries.entity';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
+import { AccessGuard } from 'src/access/guards/access.guard';
+import { CheckAccess } from 'src/access/decorators/access.decorator';
+import { PostParams } from '../enums/post-params.enum';
 
 @Controller('posts')
 export class PostsController {
@@ -44,8 +48,10 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
-  @Get(':postId')
-  async findOne(@Param('postId', ParseIntPipe) id: number): Promise<PostEntity> {
+  @Get(':' + PostParams.postId)
+  async findOne(
+    @Param(PostParams.postId, ParseIntPipe) id: number
+  ): Promise<PostEntity> {
     return this.postsService.findPostById(id);
   }
 
@@ -66,39 +72,41 @@ export class PostsController {
     return post;
   }
 
-  @Put(':postId')
-  @UseGuards(JwtAuthGuard)
+  @Put(':' + PostParams.postId)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @CheckAccess(PostEntity)
   @UseInterceptors(FilesInterceptor('new_photos', postsConstants.maxImgCount, multerOptions))
   async update(
-    @Param('postId') postId: number,
+    @Param(PostParams.postId) postId: number,
     @Body() updatePostDto: UpdatePostDto,
+    @CurrentUser('id') userId: number,
     @UploadedFiles() files?: Express.Multer.File[]
-  ): Promise<UpdateResult> {
-    console.log(updatePostDto);
+  ): Promise<UpdateResult | ForbiddenException> {
     return this.postsService.updatePost(postId, updatePostDto, files);
   }
 
-  @Delete(':postId')
-  @UseGuards(JwtAuthGuard)
-  async remove(@Param('postId') postId: number): Promise<DeleteResult> {
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @CheckAccess(PostEntity)
+  @Delete(':' + PostParams.postId)
+  async remove(@Param(PostParams.postId) postId: number): Promise<DeleteResult> {
     return this.postsService.removePost(postId);
   }
 
   // Likes
 
-  @Post('like/:postId')
+  @Post('like/:' + PostParams.postId)
   @UseGuards(JwtAuthGuard)
   async addLike(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param(PostParams.postId, ParseIntPipe) postId: number,
     @CurrentUser('id') userId: number
   ): Promise<Like> {
     return await this.postsService.addLike(postId, userId);
   }
 
-  @Delete('like/:postId')
+  @Delete('like/:' + PostParams.postId)
   @UseGuards(JwtAuthGuard)
   async removeLike(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param(PostParams.postId, ParseIntPipe) postId: number,
     @CurrentUser('id') userId: number
   ): Promise<DeleteResult> {
     return await this.postsService.removeLike(postId, userId);
@@ -106,32 +114,34 @@ export class PostsController {
 
   // Comments
 
-  @Post(':postId/comment')
+  @Post(':' + PostParams.postId + '/comment')
   @UseGuards(JwtAuthGuard)
   async addComment(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param(PostParams.postId, ParseIntPipe) postId: number,
     @CurrentUser('id') userId: number,
     @Body() createCommentDto: CreateCommentDto
   ): Promise<Commentary> {
     return this.postsService.addComment(postId, userId, createCommentDto);
   }
 
-  @Put(':postId/comment/:commentId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @CheckAccess(Commentary)
+  @Put(':' + PostParams.postId + '/comment/:commentId')
   async updateComment(
-    @Param('postId', ParseIntPipe) postId: number,
-    @Param('commentId', ParseIntPipe) commentId: number,
+    @Param(PostParams.postId, ParseIntPipe) postId: number,
+    @Param(PostParams.commentId, ParseIntPipe) commentId: number,
     @CurrentUser('id') userId: number,
     @Body() updateCommentDto: UpdateCommentDto
   ): Promise<UpdateResult> {
     return this.postsService.updateComment(postId, userId, commentId, updateCommentDto);
   }
 
-  @Delete(':postId/comment/:commentId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AccessGuard)
+  @CheckAccess(Commentary)
+  @Delete(':' + PostParams.postId + '/comment/:commentId')
   async removeComment(
-    @Param('postId', ParseIntPipe) postId: number,
-    @Param('commentId', ParseIntPipe) commentId: number,
+    @Param(PostParams.postId, ParseIntPipe) postId: number,
+    @Param(PostParams.commentId, ParseIntPipe) commentId: number,
     @CurrentUser('id') userId: number
   ): Promise<DeleteResult> {
     return this.postsService.removeComment(postId, userId, commentId);

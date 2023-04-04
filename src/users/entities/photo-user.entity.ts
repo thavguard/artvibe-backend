@@ -7,7 +7,7 @@ export class PhotoUserEntity extends AbstractEntity {
     @Column()
     public filename: string
 
-    @ManyToOne(() => User, (user) => user.photos, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.photos, { onDelete: 'CASCADE', eager: true })
     @JoinColumn()
     public user: User
 }

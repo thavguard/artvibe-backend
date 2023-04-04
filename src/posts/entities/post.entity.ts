@@ -13,18 +13,18 @@ export class PostEntity extends AbstractEntity {
   @Column()
   public body: string;
 
-  @OneToMany(() => Like, (like) => like.post, { onDelete: 'CASCADE' })
+  @OneToMany(() => Like, (like) => like.post, { onDelete: 'CASCADE', eager: true })
   public likes: Like[];
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE', eager: true })
   @JoinColumn()
   public user: User;
 
-  @OneToMany(() => PostPhotoEntity, (photo) => photo.post, { onDelete: 'CASCADE' })
+  @OneToMany(() => PostPhotoEntity, (photo) => photo.post, { onDelete: 'CASCADE', eager: true })
   @JoinColumn()
   public photos: PostPhotoEntity[];
 
-  @OneToMany(() => Commentary, (comment) => comment.post, { onDelete: 'CASCADE' })
+  @OneToMany(() => Commentary, (comment) => comment.post, { onDelete: 'CASCADE', eager: true })
   @JoinColumn()
   public commentaries: Commentary[]
 

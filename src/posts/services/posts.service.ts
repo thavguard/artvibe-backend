@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PostEntity } from '../entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -18,6 +18,7 @@ import { selectUserDto } from 'src/users/dtos/select-user.dto';
 import { selectPostDto } from '../dtos/select-post.dto';
 import { PostgresErrorCode } from 'src/database/constraints/errors.constraint';
 import { LikeAlreadyExistException } from '../exceptions/like-already-exist.exception';
+import { PostNotFoundException } from '../exceptions/post-not-found.exception';
 
 @Injectable()
 export class PostsService {
@@ -27,8 +28,16 @@ export class PostsService {
     private readonly usersService: UserService,
     private readonly postPhotosService: PostPhotosService,
     private readonly likeService: LikesService,
-    private readonly commentsService: CommentariesService
+    private readonly commentsService: CommentariesService,
   ) {
+  }
+
+  async CanManage(userId: number, postId: number): Promise<boolean> {
+    const post = await this.findPostById(postId)
+
+    if (!post) throw new PostNotFoundException(postId)
+
+    return post.user.id === userId
   }
 
   // Post
@@ -50,7 +59,7 @@ export class PostsService {
   }
 
   async findPostById(postId: number): Promise<PostEntity> {
-    return await this.postRepository.findOne({
+    const post = await this.postRepository.findOne({
       where: { id: postId },
       relations: {
         user: true,
@@ -60,10 +69,18 @@ export class PostsService {
       },
       select: selectPostDto
     });
+
+    if (!post) throw new PostNotFoundException(postId)
+
+    return post
   }
 
   async findPostsByUserId(userId: number): Promise<PostEntity[]> {
-    return this.postRepository.find({ where: { user: { id: userId } } });
+    const posts = await this.postRepository.find({ where: { user: { id: userId } } });
+
+    if (!posts.length) throw new BadRequestException('У пользователя нет постов')
+
+    return posts
   }
 
   async createPost(

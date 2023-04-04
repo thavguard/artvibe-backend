@@ -19,7 +19,7 @@ export class User extends AbstractEntity {
   @Exclude()
   public password: string;
 
-  @OneToOne(() => PhotoUserEntity, (photo) => photo.user)
+  @OneToOne(() => PhotoUserEntity, (photo) => photo.user,)
   @JoinColumn()
   public avatar: PhotoUserEntity;
 
