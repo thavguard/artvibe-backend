@@ -43,6 +43,8 @@ Backend для социальной сети. Написан на [NestJS](https
 
 ### Запуск проекта
 
+`sudo service redis-server start` - для работы нужен Redis
+
 `yarn start:dev` - локальная разработка
 
 `yarn build` - build
