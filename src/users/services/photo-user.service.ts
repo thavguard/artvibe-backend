@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, Repository } from "typeorm";
 import { PhotoUserEntity } from "../entities/photo-user.entity";
@@ -12,6 +12,14 @@ export class PhotoUserService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>
     ) { }
+
+    async canManage(userId: number, photoId: number): Promise<boolean> {
+        const photo = await this.findOneById(photoId)
+
+        if (!photo) throw new NotFoundException()
+
+        return photo.user.id === userId
+    }
 
     async findOneById(photoId: number): Promise<PhotoUserEntity> {
         return this.PhotoUserRepository.findOneBy({ id: photoId })

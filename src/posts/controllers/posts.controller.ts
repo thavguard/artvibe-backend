@@ -29,7 +29,6 @@ import { Like } from '../entities/like.entity';
 import { Commentary } from '../entities/commentaries.entity';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
-import { AccessGuard } from 'src/access/guards/access.guard';
 import { CheckAccess } from 'src/access/decorators/access.decorator';
 import { PostParams } from '../enums/post-params.enum';
 
@@ -73,8 +72,7 @@ export class PostsController {
   }
 
   @Put(':' + PostParams.postId)
-  @UseGuards(JwtAuthGuard, AccessGuard)
-  @CheckAccess(PostEntity)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FilesInterceptor('new_photos', postsConstants.maxImgCount, multerOptions))
   async update(
     @Param(PostParams.postId) postId: number,
@@ -82,13 +80,25 @@ export class PostsController {
     @CurrentUser('id') userId: number,
     @UploadedFiles() files?: Express.Multer.File[]
   ): Promise<UpdateResult | ForbiddenException> {
+
+    if (!await this.postsService.CanManage(userId, postId)) {
+      throw new ForbiddenException()
+    }
+
     return this.postsService.updatePost(postId, updatePostDto, files);
   }
 
-  @UseGuards(JwtAuthGuard, AccessGuard)
-  @CheckAccess(PostEntity)
+  @UseGuards(JwtAuthGuard)
   @Delete(':' + PostParams.postId)
-  async remove(@Param(PostParams.postId) postId: number): Promise<DeleteResult> {
+  async remove(
+    @Param(PostParams.postId) postId: number,
+    @CurrentUser('id') userId
+  ): Promise<DeleteResult> {
+
+    if (!await this.postsService.CanManage(userId, postId)) {
+      throw new ForbiddenException()
+    }
+
     return this.postsService.removePost(postId);
   }
 
@@ -124,8 +134,7 @@ export class PostsController {
     return this.postsService.addComment(postId, userId, createCommentDto);
   }
 
-  @UseGuards(JwtAuthGuard, AccessGuard)
-  @CheckAccess(Commentary)
+  @UseGuards(JwtAuthGuard)
   @Put(':' + PostParams.postId + '/comment/:commentId')
   async updateComment(
     @Param(PostParams.postId, ParseIntPipe) postId: number,
@@ -133,17 +142,26 @@ export class PostsController {
     @CurrentUser('id') userId: number,
     @Body() updateCommentDto: UpdateCommentDto
   ): Promise<UpdateResult> {
+
+    if (!await this.postsService.CanManage(userId, postId)) {
+      throw new ForbiddenException()
+    }
+
     return this.postsService.updateComment(postId, userId, commentId, updateCommentDto);
   }
 
-  @UseGuards(JwtAuthGuard, AccessGuard)
-  @CheckAccess(Commentary)
+  @UseGuards(JwtAuthGuard)
   @Delete(':' + PostParams.postId + '/comment/:commentId')
   async removeComment(
     @Param(PostParams.postId, ParseIntPipe) postId: number,
     @Param(PostParams.commentId, ParseIntPipe) commentId: number,
     @CurrentUser('id') userId: number
   ): Promise<DeleteResult> {
+
+    if (!await this.postsService.CanManage(userId, postId)) {
+      throw new ForbiddenException()
+    }
+
     return this.postsService.removeComment(postId, userId, commentId);
   }
 

@@ -43,7 +43,7 @@ import { PhotoUserModule } from './users/modules/photo-user.module';
     PostPhotosModule,
     CommentariesModule,
     MessagesModule,
-    PhotoUserModule
+    PhotoUserModule,
   ],
   controllers: [AppController],
   providers: [AppService]

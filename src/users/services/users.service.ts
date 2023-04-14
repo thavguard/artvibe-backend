@@ -75,6 +75,10 @@ export class UserService {
     return this.photoUserService.addPhotos(userId, photos)
   }
 
+  async removePhoto(userId: number, photoId: number): Promise<DeleteResult> {
+    return this.photoUserService.removePhoto(userId, photoId)
+  }
+
   async remove(id: number) {
     return this.userRepository.delete(id);
   }

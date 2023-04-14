@@ -10,6 +10,7 @@ import { multerOptions } from "src/multer/configs/multer.config";
 import { UpdateAvatarDto } from "./dtos/update-avatar.dto";
 import { profileConstants } from "./constants/profile.const";
 import { PhotoUserEntity } from "src/users/entities/photo-user.entity";
+import { ProfileParams } from "./enums/profile-params.enum";
 
 @Controller("profile")
 export class ProfileController {
@@ -40,6 +41,16 @@ export class ProfileController {
     @UploadedFiles() photos: Express.Multer.File[]
   ): Promise<PhotoUserEntity[]> {
     return this.userService.addPhotos(profileId, photos)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/current/photo/:' + ProfileParams.photoId)
+  async removePhoto(
+    @CurrentUser('id') userId: number,
+    @Param(ProfileParams.photoId) photoId: number,
+
+  ): Promise<DeleteResult> {
+    return this.userService.removePhoto(userId, photoId)
   }
 
 

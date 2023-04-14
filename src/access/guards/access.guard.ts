@@ -8,13 +8,16 @@ import { JwtStrategyValidateDto } from "src/authentication/dtos/jwt-strategy-val
 import { PostParams } from "src/posts/enums/post-params.enum";
 import { Commentary } from "src/posts/entities/commentaries.entity";
 import { CommentariesService } from "src/posts/services/commentaries.service";
+import { PhotoUserEntity } from "src/users/entities/photo-user.entity";
+import { PhotoUserService } from "src/users/services/photo-user.service";
+import { ProfileParams } from "src/profile/enums/profile-params.enum";
 
 interface AccessReq {
     user: JwtStrategyValidateDto,
-    params?: typeof PostParams
+    params?: typeof PostParams & typeof ProfileParams
 }
 
-export type AccessSubject = typeof PostEntity | typeof Commentary
+export type AccessSubject = typeof PostEntity | typeof Commentary | typeof PhotoUserEntity
 
 
 @Injectable()
@@ -26,7 +29,9 @@ export class AccessGuard implements CanActivate {
         @Inject(PostsService)
         private readonly postsService: PostsService,
         @Inject(CommentariesService)
-        private readonly commentSerivice: CommentariesService
+        private readonly commentSerivice: CommentariesService,
+        @Inject(PhotoUserService)
+        private readonly photoUserService: PhotoUserService
     ) {
     }
 
@@ -39,18 +44,24 @@ export class AccessGuard implements CanActivate {
 
         const { user, params }: AccessReq = context.switchToHttp().getRequest();
 
-        const fullUser = await this.userService.findOneById(user.id)
+        const userEntity = await this.userService.findOneById(user.id)
 
-        if (fullUser.isAdmin) {
+        console.log(params);
+
+
+        if (userEntity.isAdmin) {
             return true
         }
 
         switch (Entity) {
             case PostEntity:
-                return await this.postsService.CanManage(fullUser.id, +params.postId)
+                return await this.postsService.CanManage(userEntity.id, +params?.postId)
 
             case Commentary:
-                return await this.commentSerivice.canManage(fullUser.id, +params.commentId)
+                return await this.commentSerivice.canManage(userEntity.id, +params?.commentId)
+
+            case PhotoUserEntity:
+                return await this.photoUserService.canManage(userEntity.id, +params?.photoId)
 
             default:
                 return false
