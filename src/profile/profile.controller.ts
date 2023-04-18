@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { User } from "../users/entities/user.entity";
 import { JwtAuthGuard } from "../authentication/guards/jwt-auth.guard";
 import { CurrentUser } from "../authentication/decorators/current-user-id.decorator";
@@ -84,5 +84,7 @@ export class ProfileController {
   ): Promise<User> {
     return this.userService.findOneById(id)
   }
+
+
 
 }

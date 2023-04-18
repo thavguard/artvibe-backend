@@ -1,8 +1,9 @@
-import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { AbstractEntity } from '../../common/entities/abstract.entity';
 import { Exclude } from 'class-transformer';
 import { PostEntity } from '../../posts/entities/post.entity';
 import { PhotoUserEntity } from './photo-user.entity';
+import { FriendsEntity } from 'src/friends/entities/friends.entity';
 
 @Entity('users')
 export class User extends AbstractEntity {
@@ -35,4 +36,11 @@ export class User extends AbstractEntity {
   @OneToMany(() => PhotoUserEntity, (entity) => entity.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   public photos: PhotoUserEntity[]
+
+  @OneToOne(() => FriendsEntity, (friends) => friends.user, { eager: true, })
+  @JoinColumn()
+  public friends: FriendsEntity
+
+
+
 }

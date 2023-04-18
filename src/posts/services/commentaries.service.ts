@@ -30,6 +30,7 @@ export class CommentariesService {
 
         if (!comment) throw new NotFoundException()
 
+
         return comment.user.id === userId
     }
 

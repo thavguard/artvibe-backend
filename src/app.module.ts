@@ -15,6 +15,7 @@ import { MulterModule } from './multer/multer.module';
 import { CommentariesModule } from './posts/modules/commentaries.module';
 import { MessagesModule } from './messages/messages.module';
 import { PhotoUserModule } from './users/modules/photo-user.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { PhotoUserModule } from './users/modules/photo-user.module';
     CommentariesModule,
     MessagesModule,
     PhotoUserModule,
+    FriendsModule
   ],
   controllers: [AppController],
   providers: [AppService]

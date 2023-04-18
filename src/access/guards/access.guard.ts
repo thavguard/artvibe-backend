@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Inject, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Inject, Injectable, Optional } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { UserService } from "src/users/services/users.service";
 import { CHECK_ACCESS } from "../decorators/access.decorator";
@@ -26,10 +26,13 @@ export class AccessGuard implements CanActivate {
         private reflector: Reflector,
         @Inject(UserService)
         private readonly userService: UserService,
+        @Optional()
         @Inject(PostsService)
         private readonly postsService: PostsService,
+        @Optional()
         @Inject(CommentariesService)
         private readonly commentSerivice: CommentariesService,
+        @Optional()
         @Inject(PhotoUserService)
         private readonly photoUserService: PhotoUserService
     ) {

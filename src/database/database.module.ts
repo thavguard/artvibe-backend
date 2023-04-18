@@ -3,7 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { NODE_ENV } from "../app.constant";
 import { User } from "../users/entities/user.entity";
-import { AuthenticationSubscriber } from "../authentication/subscribers/authentication.subscriber";
 
 @Module({
   imports: [
@@ -19,11 +18,11 @@ import { AuthenticationSubscriber } from "../authentication/subscribers/authenti
         database: configService.get("POSTGRES_DB"),
         entities: [__dirname + "/../**/*.entity{.ts,.js}"],
         synchronize: configService.get("NODE_ENV") === NODE_ENV.DEVELOPMENT,
-        logging: configService.get("NODE_ENV") === NODE_ENV.DEVELOPMENT,
-        subscribers: [AuthenticationSubscriber],
+        // logging: configService.get("NODE_ENV") === NODE_ENV.DEVELOPMENT,
+        logging: false,
         autoLoadEntities: true,
       }),
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }

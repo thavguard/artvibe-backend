@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAvatarDto } from 'src/profile/dtos/update-avatar.dto';
 import { DeleteResult, QueryRunner, Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { PhotoUserEntity } from '../entities/photo-user.entity';
 import { User } from '../entities/user.entity';
 import { PhotoUserService } from './photo-user.service';
 import { UserNotFoundException } from '../exceptions/user-not-found.exception';
+import { AuthenticationProvider } from 'src/authentication/providers/authentication.provider';
 
 @Injectable()
 export class UserService {
@@ -24,7 +25,15 @@ export class UserService {
   }
 
   async findOneById(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id }, relations: { avatar: true, photos: true } });
+    const user = await this.userRepository.findOne({
+      where: { id }, relations: {
+        avatar: true, photos: true, friends: {
+          receivedFriends: true,
+          sentFriends: true,
+          friends: true
+        }
+      }
+    });
 
     if (!user) {
       throw new UserNotFoundException(id)
@@ -44,6 +53,8 @@ export class UserService {
   ): Promise<User> {
     const user = this.userRepository.create(createUserDto);
 
+    user.password = await AuthenticationProvider.generateHash(user.password)
+
     const savedUser = await this.userRepository.save(user);
 
     if (avatar) {
@@ -54,7 +65,8 @@ export class UserService {
   }
 
   async update(userId: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(userId, { ...updateUserDto });
+    const password = await AuthenticationProvider.generateHash(updateUserDto.password)
+    return this.userRepository.update(userId, { ...updateUserDto, password });
   }
 
   async updateAvatar(userId: number, file?: Express.Multer.File, updateAvatarDto?: UpdateAvatarDto) {
@@ -82,4 +94,10 @@ export class UserService {
   async remove(id: number) {
     return this.userRepository.delete(id);
   }
+
+  public saveUser(user: User): Promise<User> {
+    return this.userRepository.save(user)
+  }
+
+
 }

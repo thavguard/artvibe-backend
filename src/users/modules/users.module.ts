@@ -7,9 +7,9 @@ import { PostPhotosModule } from "src/posts/modules/post-photos.module";
 import { PhotoUserModule } from "./photo-user.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User,]), PhotoUserModule,],
-  providers: [UserService],
+  imports: [TypeOrmModule.forFeature([User]), PhotoUserModule,],
+  providers: [UserService,],
   controllers: [UserController],
-  exports: [UserService, PhotoUserModule],
+  exports: [UserService, PhotoUserModule,],
 })
 export class UserModule { }
