@@ -7,5 +7,5 @@ export class AuthPayloadDto {
 
   @IsNumber()
   @IsNotEmpty()
-  readonly sub: number;
+  readonly id: number;
 }

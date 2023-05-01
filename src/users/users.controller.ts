@@ -1,5 +1,15 @@
 import { UpdateUserDto } from "./dtos/update-user.dto";
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from "@nestjs/common";
 import { UserService } from "./services/users.service";
 import { JwtAuthGuard } from "src/authentication/guards/jwt-auth.guard";
 import { CurrentUser } from "src/authentication/decorators/current-user-id.decorator";
@@ -7,9 +17,7 @@ import { User } from "./entities/user.entity";
 
 @Controller("users")
 export class UserController {
-  constructor(
-    private readonly usersService: UserService,
-  ) { }
+  constructor(private readonly usersService: UserService) {}
 
   @Get()
   getAll() {
@@ -30,6 +38,4 @@ export class UserController {
   remove(@Param("id") id: number) {
     return this.usersService.remove(id);
   }
-
-
 }

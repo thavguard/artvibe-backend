@@ -1,3 +1,3 @@
 export enum ProfileParams {
-    photoId = 'photoId'
+  photoId = "photoId",
 }

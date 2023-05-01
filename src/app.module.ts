@@ -1,21 +1,23 @@
-import * as Joi from '@hapi/joi';
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './users/modules/users.module';
-import { AuthModule } from './authentication/auth.module';
-import { ConfigModule } from '@nestjs/config';
-import { NODE_ENV } from './app.constant';
-import { DatabaseModule } from './database/database.module';
-import { ProfileModule } from './profile/profile.module';
-import { PostsModule } from './posts/modules/posts.module';
-import { LikesModule } from './posts/modules/likes.module';
-import { PostPhotosModule } from './posts/modules/post-photos.module';
-import { MulterModule } from './multer/multer.module';
-import { CommentariesModule } from './posts/modules/commentaries.module';
-import { MessagesModule } from './messages/messages.module';
-import { PhotoUserModule } from './users/modules/photo-user.module';
-import { FriendsModule } from './friends/friends.module';
+import * as Joi from "@hapi/joi";
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { UserModule } from "./users/modules/users.module";
+import { AuthModule } from "./authentication/auth.module";
+import { ConfigModule } from "@nestjs/config";
+import { NODE_ENV } from "./app.constant";
+import { DatabaseModule } from "./database/database.module";
+import { ProfileModule } from "./profile/profile.module";
+import { PostsModule } from "./posts/modules/posts.module";
+import { LikesModule } from "./posts/modules/likes.module";
+import { PostPhotosModule } from "./posts/modules/post-photos.module";
+import { MulterModule } from "./multer/multer.module";
+import { CommentariesModule } from "./posts/modules/commentaries.module";
+import { MessagesModule } from "./messages/messages.module";
+import { PhotoUserModule } from "./users/modules/photo-user.module";
+import { FriendsModule } from "./friends/friends.module";
+import { NotificationsModule } from "./notifications/notifications.module";
+import { WallModule } from "./wall/wall.module";
 
 @Module({
   imports: [
@@ -32,8 +34,8 @@ import { FriendsModule } from './friends/friends.module';
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
-        JWT_SECRET: Joi.string().required()
-      })
+        JWT_SECRET: Joi.string().required(),
+      }),
     }),
     UserModule,
     AuthModule,
@@ -45,10 +47,11 @@ import { FriendsModule } from './friends/friends.module';
     CommentariesModule,
     MessagesModule,
     PhotoUserModule,
-    FriendsModule
+    FriendsModule,
+    NotificationsModule,
+    WallModule,
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}

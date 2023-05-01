@@ -7,7 +7,7 @@ export class PostPhotoEntity extends AbstractEntity {
   @Column()
   public filename: string;
 
-  @ManyToOne(() => PostEntity, (post) => post.photos, { onDelete: 'CASCADE' })
+  @ManyToOne(() => PostEntity, (post) => post.photos, { onDelete: "CASCADE" })
   @JoinColumn()
   public post: PostEntity;
 }

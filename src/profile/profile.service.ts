@@ -7,8 +7,5 @@ import { User } from "../users/entities/user.entity";
 
 @Injectable()
 export class ProfileService {
-  constructor(
-
-  ) { }
-
+  constructor() {}
 }

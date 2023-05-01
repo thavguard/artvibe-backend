@@ -5,8 +5,8 @@ import { User } from "../entities/user.entity";
 import { PhotoUserService } from "../services/photo-user.service";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([PhotoUserEntity, User])],
-    providers: [PhotoUserService],
-    exports: [PhotoUserService]
+  imports: [TypeOrmModule.forFeature([PhotoUserEntity, User])],
+  providers: [PhotoUserService],
+  exports: [PhotoUserService],
 })
-export class PhotoUserModule { }
+export class PhotoUserModule {}

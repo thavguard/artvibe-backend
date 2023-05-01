@@ -6,8 +6,8 @@ import { PostEntity } from "../entities/post.entity";
 import { CommentariesService } from "../services/commentaries.service";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([PostEntity, Commentary]), UserModule],
-    providers: [CommentariesService],
-    exports: [CommentariesService],
+  imports: [TypeOrmModule.forFeature([PostEntity, Commentary]), UserModule],
+  providers: [CommentariesService],
+  exports: [CommentariesService],
 })
-export class CommentariesModule { }
+export class CommentariesModule {}

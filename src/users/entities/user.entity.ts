@@ -1,11 +1,21 @@
-import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
-import { AbstractEntity } from '../../common/entities/abstract.entity';
-import { Exclude } from 'class-transformer';
-import { PostEntity } from '../../posts/entities/post.entity';
-import { PhotoUserEntity } from './photo-user.entity';
-import { FriendsEntity } from 'src/friends/entities/friends.entity';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+} from "typeorm";
+import { AbstractEntity } from "../../common/entities/abstract.entity";
+import { Exclude } from "class-transformer";
+import { PostEntity } from "../../posts/entities/post.entity";
+import { PhotoUserEntity } from "./photo-user.entity";
+import { FriendsEntity } from "src/friends/entities/friends.entity";
+import { NotificationEntity } from "src/notifications/entities/notification.entity";
 
-@Entity('users')
+@Entity("users")
 export class User extends AbstractEntity {
   @Column()
   public firstName: string;
@@ -20,7 +30,11 @@ export class User extends AbstractEntity {
   @Exclude()
   public password: string;
 
-  @OneToOne(() => PhotoUserEntity, (photo) => photo.user,)
+  @Column({ nullable: true })
+  @Exclude()
+  public refreshToken: string;
+
+  @OneToOne(() => PhotoUserEntity, (photo) => photo.user)
   @JoinColumn()
   public avatar: PhotoUserEntity;
 
@@ -30,17 +44,19 @@ export class User extends AbstractEntity {
   @Column({ default: false })
   public isAdmin: boolean;
 
-  @OneToMany(() => PostEntity, (post) => post.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => PostEntity, (post) => post.user, { onDelete: "CASCADE" })
   public posts: PostEntity[];
 
-  @OneToMany(() => PhotoUserEntity, (entity) => entity.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => PhotoUserEntity, (entity) => entity.user, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
-  public photos: PhotoUserEntity[]
+  public photos: PhotoUserEntity[];
 
-  @OneToOne(() => FriendsEntity, (friends) => friends.user, { eager: true, })
+  @OneToOne(() => FriendsEntity, (friends) => friends.user, { eager: true })
   @JoinColumn()
-  public friends: FriendsEntity
+  public friends: FriendsEntity;
 
-
-
+  @OneToMany(() => NotificationEntity, (noti) => noti.user)
+  public notifications: NotificationEntity[];
 }

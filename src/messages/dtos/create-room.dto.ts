@@ -1,4 +1,10 @@
-import { IsArray, IsBoolean, IsEmpty, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEmpty,
+  IsNotEmpty,
+  IsString,
+} from "class-validator";
 
 export class CreateRoomDto {
   @IsString()
@@ -9,5 +15,5 @@ export class CreateRoomDto {
   public userIds: number[];
 
   @IsBoolean()
-  public isPrivate: boolean
+  public isPrivate: boolean;
 }

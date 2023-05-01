@@ -1,3 +1,3 @@
 export const profileConstants = {
-    maxImgCount: 10
-}
+  maxImgCount: 10,
+};

@@ -1,3 +1,1 @@
-export const selectMessagesDto = {
-
-}
+export const selectMessagesDto = {};

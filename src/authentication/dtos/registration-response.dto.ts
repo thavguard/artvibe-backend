@@ -1,5 +1,3 @@
-import { LoginResponseDto } from './login-response.dto';
+import { AuthResponse } from "./login-response.dto";
 
-export class RegistrationResponseDto extends LoginResponseDto {
-
-}
+export class RegistrationResponseDto extends AuthResponse {}

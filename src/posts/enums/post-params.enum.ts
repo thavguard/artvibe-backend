@@ -1,4 +1,4 @@
 export enum PostParams {
-    postId = 'postId',
-    commentId = 'commentId'
+  postId = "postId",
+  commentId = "commentId",
 }

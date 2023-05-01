@@ -5,8 +5,8 @@ import { UserModule } from "../users/modules/users.module";
 import { PostsModule } from "src/posts/modules/posts.module";
 
 @Module({
-  imports: [UserModule, PostsModule,],
+  imports: [UserModule, PostsModule],
   controllers: [ProfileController],
   providers: [ProfileService],
 })
-export class ProfileModule { }
+export class ProfileModule {}
