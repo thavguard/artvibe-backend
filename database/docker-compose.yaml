@@ -1,0 +1,17 @@
+services:
+  artvibe-pg:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=artvibe
+      - POSTGRES_PASSWORD=abLEAn
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=root
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
